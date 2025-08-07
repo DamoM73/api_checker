@@ -2,8 +2,8 @@ import requests
 import urllib3
 import timeit
 
-def can_access(url):
-    response = requests.head(url, verify=False)  # Disable SSL certificate verification
+def can_access(url, verified):
+    response = requests.head(url, verify=verified)  # Disable SSL certificate verification
     return response.status_code == 200
 
 urls = [
@@ -24,11 +24,14 @@ urls = [
     "https://api.open5e.com/v2/armor/",
 ]
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+verified = True
+
+if not verified:
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 for url in urls:
     start = timeit.default_timer()
-    access = can_access(url)
+    access = can_access(url, verified)
     elapsed = timeit.default_timer() - start
     print(f"{url}\taccess: {access}\ttime: {elapsed:.4f} seconds")
 
